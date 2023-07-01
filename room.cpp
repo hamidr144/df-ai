@@ -13,7 +13,7 @@
 #include "df/world.h"
 #include "df/world_site.h"
 
-REQUIRE_GLOBAL(ui);
+REQUIRE_GLOBAL(plotinfo);
 REQUIRE_GLOBAL(world);
 
 #define BEGIN_ENUM BEGIN_IMPLEMENT_ENUM
@@ -401,7 +401,7 @@ int32_t room::compute_value() const
 
     if (type == room_type::location && bld->location_id != -1)
     {
-        auto loc = binsearch_in_vector(ui->main.fortress_site->buildings, bld->location_id);
+        auto loc = binsearch_in_vector(plotinfo->main.fortress_site->buildings, bld->location_id);
         if (loc && loc->getContents())
         {
             return loc->getContents()->location_value;
@@ -414,7 +414,8 @@ int32_t room::compute_value() const
         u = world->units.active[0];
     }
 
-    return bld->getRoomValue(u);
+    //return bld->getRoomValue(u);
+    return false;
 }
 
 int32_t room::distance_to(const room *other) const

@@ -56,17 +56,17 @@ protected:
 
             if (wanted > 0)
             {
-                Key(interface_key::D_BUILDJOB);
-                Gui::setCursorCoords(workshop->min.x, workshop->min.y, workshop->min.z);
-                Key(interface_key::CURSOR_DOWNRIGHT);
+                //Key(interface_key::D_BUILDJOB);
+                //Gui::setCursorCoords(workshop->min.x, workshop->min.y, workshop->min.z);
+                //Key(interface_key::CURSOR_DOWNRIGHT);
 
-                ai.debug(out, stl_sprintf("queueing %d chairs directly at ", wanted) + ai.describe_room(workshop));
-                while (wanted > 0)
-                {
-                    Key(interface_key::BUILDJOB_ADD);
-                    Key(interface_key::HOTKEY_MASON_CHAIR);
-                    wanted--;
-                }
+                //ai.debug(out, stl_sprintf("queueing %d chairs directly at ", wanted) + ai.describe_room(workshop));
+                //while (wanted > 0)
+                //{
+                //    Key(interface_key::BUILDJOB_ADD);
+                //    Key(interface_key::HOTKEY_MASON_CHAIR);
+                //    wanted--;
+                //}
 
                 Key(interface_key::LEAVESCREEN);
             }

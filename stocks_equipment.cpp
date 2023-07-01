@@ -24,10 +24,10 @@
 #include "df/manager_order.h"
 #include "df/manager_order_template.h"
 #include "df/strain_type.h"
-#include "df/ui.h"
+//#include "df/plotinfo.h"
 #include "df/world.h"
 
-REQUIRE_GLOBAL(ui);
+REQUIRE_GLOBAL(plotinfo);
 REQUIRE_GLOBAL(world);
 
 // forge weapons
@@ -187,7 +187,7 @@ void Stocks::queue_need_weapon(color_ostream & out, stock_item::item stock_item,
         }
     };
 
-    auto & ue = ui->main.fortress_entity->entity_raw->equipment;
+    auto & ue = plotinfo->main.fortress_entity->entity_raw->equipment;
     if (digger)
     {
         cant_pickaxe = false;
@@ -277,7 +277,7 @@ static void queue_need_armor_helper(AI & ai, color_ostream & out, stock_item::it
 // forge armor pieces
 void Stocks::queue_need_armor(color_ostream & out, stock_item::item what, std::ostream & reason)
 {
-    auto & ue = ui->main.fortress_entity->entity_raw->equipment;
+    auto & ue = plotinfo->main.fortress_entity->entity_raw->equipment;
 
     switch (what)
     {
@@ -442,7 +442,7 @@ void Stocks::queue_need_clothes(color_ostream & out, stock_item::item what, std:
     // try to avoid cancel spam
     int32_t available_cloth = count_free.at(stock_item::cloth) - 20;
 
-    auto & ue = ui->main.fortress_entity->entity_raw->equipment;
+    auto & ue = plotinfo->main.fortress_entity->entity_raw->equipment;
 
     switch (what)
     {

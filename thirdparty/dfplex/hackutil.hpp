@@ -11,7 +11,7 @@
 #include "modules/World.h"
 #include "df/ui_sidebar_mode.h"
 #include "df/viewscreen.h"
-#include "df/viewscreen_meetingst.h"
+//#include "df/viewscreen_meetingst.h"
 #include "df/unit.h"
 #include "modules/Gui.h"
 #include "modules/Screen.h"
@@ -172,16 +172,15 @@ inline bool is_designation_mode_sub(df::ui_sidebar_mode mode)
 // basic designations only
 inline bool is_designation_mode(df::ui_sidebar_mode mode)
 {
-    using namespace df;
-    if (mode >= ui_sidebar_mode::DesignateMine && mode <= ui_sidebar_mode::DesignateCarveFortification)
+    if (mode >= df::ui_sidebar_mode::DesignateMine && mode <= df::ui_sidebar_mode::DesignateCarveFortification)
     {
         return true;
     }
-    if (mode == ui_sidebar_mode::DesignateRemoveConstruction)
+    if (mode == df::ui_sidebar_mode::DesignateRemoveConstruction)
     {
         return true;
     }
-    if (mode >= ui_sidebar_mode::DesignateChopTrees && mode <= ui_sidebar_mode::DesignateToggleMarker)
+    if (mode >= df::ui_sidebar_mode::DesignateChopTrees && mode <= df::ui_sidebar_mode::DesignateToggleMarker)
     {
         return true;
     }

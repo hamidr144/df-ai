@@ -14,7 +14,7 @@
 #include <memory>
 
 #include "df/interface_key.h"
-#include "SDL_keysym.h"
+//#include "SDL_keysym.h"
 
 enum class EventType {
     type_unicode,
@@ -31,7 +31,7 @@ struct KeyEvent {
 
     std::unique_ptr<std::set<df::interface_key>> interface_keys;
     uint16_t unicode = 0;
-    SDL::Key key = SDL::K_UNKNOWN;
+    //SDL::Key key = SDL::K_UNKNOWN;
     uint8_t button = 0;
 
     inline bool operator== (const KeyEvent &other) const {
@@ -39,7 +39,7 @@ struct KeyEvent {
         if (type != other.type) return false;
         switch (type) {
             case EventType::type_unicode: return unicode == other.unicode;
-            case EventType::type_key: return key == other.key;
+            //case EventType::type_key: return key == other.key;
             case EventType::type_button: return button == other.button;
             default: return false;
         }
@@ -50,7 +50,7 @@ struct KeyEvent {
         if (type != other.type) return type < other.type;
         switch (type) {
             case EventType::type_unicode: return unicode < other.unicode;
-            case EventType::type_key: return key < other.key;
+            //case EventType::type_key: return key < other.key;
             case EventType::type_button: return button < other.button;
             default: return false;
         }

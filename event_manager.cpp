@@ -8,8 +8,8 @@
 #include "exclusive_callback.h"
 #include "debug.h"
 
-#include "df/viewscreen_movieplayerst.h"
-#include "df/viewscreen_textviewerst.h"
+//#include "df/viewscreen_movieplayerst.h"
+//#include "df/viewscreen_textviewerst.h"
 
 #include "modules/Gui.h"
 #include "modules/Screen.h"
@@ -18,7 +18,7 @@
 REQUIRE_GLOBAL(cur_year);
 REQUIRE_GLOBAL(cur_year_tick);
 REQUIRE_GLOBAL(pause_state);
-REQUIRE_GLOBAL(ui);
+REQUIRE_GLOBAL(plotinfo);
 
 EventManager events;
 
@@ -286,10 +286,10 @@ void EventManager::create_dfplex_client()
             was_paused = *pause_state;
         }
 
-        ui->follow_unit = dwarfAI->camera.following;
+        plotinfo->follow_unit = dwarfAI->camera.following;
         if (AI::is_dwarfmode_viewscreen())
         {
-            if (auto follow = df::unit::find(ui->follow_unit))
+            if (auto follow = df::unit::find(plotinfo->follow_unit))
             {
                 Gui::revealInDwarfmodeMap(Units::getPosition(follow), true);
             }
@@ -318,8 +318,8 @@ void EventManager::create_dfplex_client()
         });
     });
     dfplex_client->id->nick = "df-ai";
-    dfplex_client->ui.m_menu_width = 3;
-    dfplex_client->ui.m_area_map_width = 3;
+    //dfplex_client->plotinfo.m_menu_width = 3;
+    //dfplex_client->plotinfo.m_area_map_width = 3;
 }
 
 void EventManager::remove_dfplex_client()
@@ -571,40 +571,40 @@ void EventManager::onstatechange(color_ostream & out, state_change_event event)
     if (event == SC_VIEWSCREEN_CHANGED)
     {
         df::viewscreen *curview = Gui::getCurViewscreen(true);
-        if (auto view = strict_virtual_cast<df::viewscreen_textviewerst>(curview))
-        {
-            if (view->formatted_text.size() == 1)
-            {
-                const std::string & text = view->formatted_text.at(0)->text;
-                if (text == "Your strength has been broken." ||
-                    text == "Your settlement has crumbled to its end." ||
-                    text == "Your settlement has been abandoned.")
-                {
-                    extern std::unique_ptr<AI> dwarfAI;
-                    if (dwarfAI)
-                    {
-                        dwarfAI->debug(out, "you just lost the game: " + text);
-                        dwarfAI->debug(out, "Exiting AI");
-                        dwarfAI->onupdate_unregister(out);
+        //if (auto view = strict_virtual_cast<df::viewscreen_textviewerst>(curview))
+        //{
+        //    if (view->formatted_text.size() == 1)
+        //    {
+        //        const std::string & text = view->formatted_text.at(0)->text;
+        //        if (text == "Your strength has been broken." ||
+        //            text == "Your settlement has crumbled to its end." ||
+        //            text == "Your settlement has been abandoned.")
+        //        {
+        //            extern std::unique_ptr<AI> dwarfAI;
+        //            if (dwarfAI)
+        //            {
+        //                dwarfAI->debug(out, "you just lost the game: " + text);
+        //                dwarfAI->debug(out, "Exiting AI");
+        //                dwarfAI->onupdate_unregister(out);
 
-                        // get rid of all the remaining event handlers
-                        events.clear();
+        //                // get rid of all the remaining event handlers
+        //                events.clear();
 
-                        // remove embark-specific saved data
-                        dwarfAI->unpersist(out);
-                        dwarfAI->skip_persist = true;
+        //                // remove embark-specific saved data
+        //                dwarfAI->unpersist(out);
+        //                dwarfAI->skip_persist = true;
 
-                        if (config.random_embark)
-                        {
-                            register_exclusive(std::make_unique<RestartWaitExclusive>(*dwarfAI), true);
-                        }
+        //                if (config.random_embark)
+        //                {
+        //                    register_exclusive(std::make_unique<RestartWaitExclusive>(*dwarfAI), true);
+        //                }
 
-                        // don't unpause, to allow for 'die'
-                    }
-                    return;
-                }
-            }
-        }
+        //                // don't unpause, to allow for 'die'
+        //            }
+        //            return;
+        //        }
+        //    }
+        //}
     }
 
     // check if we should be a client rather than uniplexing
@@ -612,18 +612,18 @@ void EventManager::onstatechange(color_ostream & out, state_change_event event)
 
     if (exclusive)
     {
-        if (auto view = strict_virtual_cast<df::viewscreen_movieplayerst>(Gui::getCurViewscreen(true)))
-        {
-            // Don't cancel the intro video this way - it causes the sounds from the intro to get stuck in CMV recordings.
-            if (!view->is_playing)
-            {
-                DFAI_DEBUG(tick, 1, "onstatechange: dismissing recording finished for exclusive");
-                Screen::dismiss(view);
-                extern std::unique_ptr<AI> dwarfAI;
-                dwarfAI->camera.check_record_status();
-                return;
-            }
-        }
+        //if (auto view = strict_virtual_cast<df::viewscreen_movieplayerst>(Gui::getCurViewscreen(true)))
+        //{
+        //    // Don't cancel the intro video this way - it causes the sounds from the intro to get stuck in CMV recordings.
+        //    if (!view->is_playing)
+        //    {
+        //        DFAI_DEBUG(tick, 1, "onstatechange: dismissing recording finished for exclusive");
+        //        Screen::dismiss(view);
+        //        extern std::unique_ptr<AI> dwarfAI;
+        //        dwarfAI->camera.check_record_status();
+        //        return;
+        //    }
+        //}
         if (event == SC_VIEWSCREEN_CHANGED)
         {
             if (ExclusiveCallback *e2 = exclusive->ReplaceOnScreenChange())

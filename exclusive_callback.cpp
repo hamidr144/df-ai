@@ -106,15 +106,24 @@ void ExclusiveCallback::checkScreen(const char *filename, int lineno)
     {
         df::viewscreen *curview = Gui::getCurViewscreen(true);
 
+
+        auto strings = Gui::getFocusStrings(curview);
+        auto stringsParent = Gui::getFocusStrings(curview->parent);
+
         bool isExpectedScreen = expectedScreen->is_instance(curview) &&
-            (expectedFocus.empty() || Gui::getFocusString(curview) == expectedFocus) &&
-            (expectedParentFocus.empty() || Gui::getFocusString(curview->parent) == expectedParentFocus);
+            (expectedFocus.empty() || std::find(strings.begin(), strings.end(), expectedFocus) != strings.end()) &&
+            (expectedParentFocus.empty() || std::find(strings.begin(), strings.end(), expectedParentFocus) != strings.end());
 
         if (first)
         {
+            //DFAI_ASSERT_LOC(isExpectedScreen,
+            //    "expected screen to be " << expectedScreen->getName() << ":" << expectedFocus << ":" << expectedParentFocus <<
+            //    ", but it is " << virtual_identity::get(curview)->getName() << ":" << Gui::getFocusStrings(curview) << ":" << Gui::getFocusStrings(curview->parent),
+            //    filename, lineno);
+
             DFAI_ASSERT_LOC(isExpectedScreen,
                 "expected screen to be " << expectedScreen->getName() << ":" << expectedFocus << ":" << expectedParentFocus <<
-                ", but it is " << virtual_identity::get(curview)->getName() << ":" << Gui::getFocusString(curview) << ":" << Gui::getFocusString(curview->parent),
+                ", but it is " << virtual_identity::get(curview)->getName() << ":" << " TODO " << ":" << " TODO ",
                 filename, lineno);
         }
 

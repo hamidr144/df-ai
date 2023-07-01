@@ -11,7 +11,7 @@
 #include "df/item_cagest.h"
 #include "df/tile_occupancy.h"
 #include "df/viewscreen_dwarfmodest.h"
-#include "df/viewscreen_locationsst.h"
+//#include "df/viewscreen_locationsst.h"
 
 REQUIRE_GLOBAL(cur_year);
 REQUIRE_GLOBAL(cur_year_tick);
@@ -491,59 +491,59 @@ public:
 
     void FinalizeTemple(color_ostream & out)
     {
-        ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
+        //ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
 
-        Key(interface_key::D_LOCATIONS);
+        //Key(interface_key::D_LOCATIONS);
 
-        ExpectedScreen<df::viewscreen_locationsst> view(this);
+        //ExpectedScreen<df::viewscreen_locationsst> view(this);
 
-        ExpectScreen<df::viewscreen_locationsst>("locations/Locations");
+        //ExpectScreen<df::viewscreen_locationsst>("locations/Locations");
 
-        auto bld = r->dfbuilding();
+        //auto bld = r->dfbuilding();
 
-        bool found = false;
-        for (auto loc : view->locations)
-        {
-            if (loc && loc->id == bld->location_id)
-            {
-                found = true;
-                break;
-            }
-        }
+        //bool found = false;
+        //for (auto loc : view->locations)
+        //{
+        //    if (loc && loc->id == bld->location_id)
+        //    {
+        //        found = true;
+        //        break;
+        //    }
+        //}
 
-        if (!found)
-        {
-            ai.debug(out, "[ERROR] could not find " + AI::describe_room(r) + " on the list");
+        //if (!found)
+        //{
+        //    ai.debug(out, "[ERROR] could not find " + AI::describe_room(r) + " on the list");
 
-            Key(interface_key::LEAVESCREEN);
+        //    Key(interface_key::LEAVESCREEN);
 
-            ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
+        //    ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
 
-            return;
-        }
+        //    return;
+        //}
 
-        while (!view->locations.at(view->location_idx) || view->locations.at(view->location_idx)->id != bld->location_id)
-        {
-            Key(interface_key::STANDARDSCROLL_DOWN);
-        }
+        //while (!view->locations.at(view->location_idx) || view->locations.at(view->location_idx)->id != bld->location_id)
+        //{
+        //    Key(interface_key::STANDARDSCROLL_DOWN);
+        //}
 
-        Key(interface_key::STANDARDSCROLL_RIGHT);
+        //Key(interface_key::STANDARDSCROLL_RIGHT);
 
-        ExpectScreen<df::viewscreen_locationsst>("locations/Occupations");
+        //ExpectScreen<df::viewscreen_locationsst>("locations/Occupations");
 
-        Key(interface_key::LOCATION_RECOGNIZE_PRIESTHOOD);
-        Key(interface_key::SELECT);
+        //Key(interface_key::LOCATION_RECOGNIZE_PRIESTHOOD);
+        //Key(interface_key::SELECT);
 
-        ExpectScreen<df::viewscreen_locationsst>("locations/AssignOccupation");
+        //ExpectScreen<df::viewscreen_locationsst>("locations/AssignOccupation");
 
-        Key(interface_key::STANDARDSCROLL_DOWN);
-        Key(interface_key::SELECT);
+        //Key(interface_key::STANDARDSCROLL_DOWN);
+        //Key(interface_key::SELECT);
 
-        ExpectScreen<df::viewscreen_locationsst>("locations/Occupations");
+        //ExpectScreen<df::viewscreen_locationsst>("locations/Occupations");
 
-        Key(interface_key::LEAVESCREEN);
+        //Key(interface_key::LEAVESCREEN);
 
-        ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
+        //ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
     }
 };
 

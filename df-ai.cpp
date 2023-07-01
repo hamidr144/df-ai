@@ -17,14 +17,17 @@
 #include "modules/Screen.h"
 
 #include "df/viewscreen_dwarfmodest.h"
-#include "df/viewscreen_optionst.h"
+//#include "df/viewscreen_optionst.h" TODO remove
+#include "df/viewscreen_savegamest.h"
 #include "df/viewscreen_titlest.h"
+
 
 DFHACK_PLUGIN("df-ai");
 DFHACK_PLUGIN_IS_ENABLED(enabled);
 
 REQUIRE_GLOBAL(pause_state);
-REQUIRE_GLOBAL(ui);
+//REQUIRE_GLOBAL(plotinfo);
+REQUIRE_GLOBAL(plotinfo);
 
 // Protected by CoreSuspender
 std::unique_ptr<AI> dwarfAI{ nullptr };
@@ -203,6 +206,8 @@ void ai_version(std::ostream & out, bool html)
     out << br;
     commit("library", "DFHack/dfhack", DFHack::Version::git_commit());
     commit("structures", "DFHack/df-structures", DFHack::Version::git_xml_commit());
+
+    out << "Custom version by Hamidr" << br;
     out << std::flush;
 }
 
@@ -332,7 +337,8 @@ DFhackCExport command_result plugin_onstatechange(color_ostream & out, state_cha
             return res;
     }
 
-    if (event == SC_VIEWSCREEN_CHANGED && strict_virtual_cast<df::viewscreen_optionst>(Gui::getCurViewscreen(true)))
+    //if (event == SC_VIEWSCREEN_CHANGED && strict_virtual_cast<df::viewscreen_optionst>(Gui::getCurViewscreen(true)))
+    if (event == SC_VIEWSCREEN_CHANGED)
     {
         command_result res = dwarfAI->persist(out);
         if (res != CR_OK)
@@ -350,7 +356,8 @@ DFhackCExport command_result plugin_onupdate(color_ostream & out)
 
     Hook_Update();
 
-    if (ui->main.autosave_request)
+    //if (plotinfo->main.autosave_request)
+    if (plotinfo->main.autosave_request)
     {
         command_result res = dwarfAI->persist(out);
         if (res != CR_OK)

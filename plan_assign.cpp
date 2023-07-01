@@ -283,21 +283,21 @@ void Plan::getsoldierbarrack(color_ostream & out, int32_t id)
 
 void Plan::assign_barrack_squad(color_ostream &, df::building *bld, int32_t squad_id)
 {
-    std::vector<df::building_squad_use *> *squads = bld->getSquads();
-    if (squads) // archerytarget has no such field
-    {
-        auto su = std::find_if(squads->begin(), squads->end(), [squad_id](df::building_squad_use *su) -> bool { return su->squad_id == squad_id; });
-        if (su == squads->end())
-        {
-            df::building_squad_use *newSquad = df::allocate<df::building_squad_use>();
-            newSquad->squad_id = squad_id;
-            su = squads->insert(su, newSquad);
-        }
-        (*su)->mode.bits.sleep = 1;
-        (*su)->mode.bits.train = 1;
-        (*su)->mode.bits.indiv_eq = 1;
-        (*su)->mode.bits.squad_eq = 1;
-    }
+    //std::vector<df::building_squad_use *> *squads = bld->getSquads();
+    //if (squads) // archerytarget has no such field
+    //{
+    //    auto su = std::find_if(squads->begin(), squads->end(), [squad_id](df::building_squad_use *su) -> bool { return su->squad_id == squad_id; });
+    //    if (su == squads->end())
+    //    {
+    //        df::building_squad_use *newSquad = df::allocate<df::building_squad_use>();
+    //        newSquad->squad_id = squad_id;
+    //        su = squads->insert(su, newSquad);
+    //    }
+    //    (*su)->mode.bits.sleep = 1;
+    //    (*su)->mode.bits.train = 1;
+    //    (*su)->mode.bits.indiv_eq = 1;
+    //    (*su)->mode.bits.squad_eq = 1;
+    //}
 
     df::squad *squad = df::squad::find(squad_id);
     auto sr = std::find_if(squad->rooms.begin(), squad->rooms.end(), [bld](df::squad::T_rooms *sr) -> bool { return sr->building_id == bld->id; });
@@ -512,7 +512,7 @@ void Plan::set_owner(color_ostream &, room *r, int32_t uid)
         df::unit *u = df::unit::find(uid);
         if (df::building *bld = r->dfbuilding())
         {
-            Buildings::setOwner(bld, u);
+            //Buildings::setOwner(bld, u);
         }
     }
 }

@@ -135,10 +135,10 @@ struct gathering_zone_hide_hook : df::building_civzonest {
 
     DEFINE_VMETHOD_INTERPOSE(bool, isVisibleInViewport, (df::map_viewport *viewport))
     {
-        if (this->zone_flags.whole == (T_zone_flags::mask_gather | T_zone_flags::mask_water_source | T_zone_flags::mask_active))
-        {
-            return false;
-        }
+        //if (this->zone_flags.whole == (T_zone_flags::mask_gather | T_zone_flags::mask_water_source | T_zone_flags::mask_active))
+        //{
+        //    return false;
+        //}
 
         return INTERPOSE_NEXT(isVisibleInViewport)(viewport);
     }
@@ -1372,36 +1372,36 @@ command_result Plan::setup_outdoor_gathering_zones(color_ostream &)
         {
             for (auto g = ground.begin(); g != ground.end(); g++)
             {
-                df::building_civzonest *bld = virtual_cast<df::building_civzonest>(Buildings::allocInstance(df::coord(x, y, g->first), building_type::Civzone, civzone_type::ActivityZone));
-                int16_t w = 31;
-                int16_t h = 31;
-                if (x + 31 > world->map.x_count)
-                    w = world->map.x_count % 31;
-                if (y + 31 > world->map.y_count)
-                    h = world->map.y_count % 31;
-                Buildings::setSize(bld, df::coord(w, h, 1));
-                delete[] bld->room.extents;
-                bld->room.extents = new df::building_extents_type[w * h]();
-                bld->room.x = x;
-                bld->room.y = y;
-                bld->room.width = w;
-                bld->room.height = h;
-                for (int16_t dx = 0; dx < w; dx++)
-                {
-                    for (int16_t dy = 0; dy < h; dy++)
-                    {
-                        bld->room.extents[dx + w * dy] = g->second.count(df::coord2d(dx, dy)) ? building_extents_type::Stockpile : building_extents_type::None;
-                    }
-                }
-                Buildings::constructAbstract(bld);
-                bld->is_room = true;
+                //df::building_civzonest *bld = virtual_cast<df::building_civzonest>(Buildings::allocInstance(df::coord(x, y, g->first), building_type::Civzone, civzone_type::ActivityZone));
+                //int16_t w = 31;
+                //int16_t h = 31;
+                //if (x + 31 > world->map.x_count)
+                //    w = world->map.x_count % 31;
+                //if (y + 31 > world->map.y_count)
+                //    h = world->map.y_count % 31;
+                //Buildings::setSize(bld, df::coord(w, h, 1));
+                //delete[] bld->room.extents;
+                //bld->room.extents = new df::building_extents_type[w * h]();
+                //bld->room.x = x;
+                //bld->room.y = y;
+                //bld->room.width = w;
+                //bld->room.height = h;
+                //for (int16_t dx = 0; dx < w; dx++)
+                //{
+                //    for (int16_t dy = 0; dy < h; dy++)
+                //    {
+                //        bld->room.extents[dx + w * dy] = g->second.count(df::coord2d(dx, dy)) ? building_extents_type::Stockpile : building_extents_type::None;
+                //    }
+                //}
+                //Buildings::constructAbstract(bld);
+                ////bld->is_room = true;
 
-                bld->zone_flags.bits.active = 1;
-                bld->zone_flags.bits.water_source = 1;
-                bld->zone_flags.bits.gather = 1;
-                bld->gather_flags.bits.pick_trees = 1;
-                bld->gather_flags.bits.pick_shrubs = 1;
-                bld->gather_flags.bits.gather_fallen = 1;
+                ////bld->zone_flags.bits.active = 1;
+                ////bld->zone_flags.bits.water_source = 1;
+                ////bld->zone_flags.bits.gather = 1;
+                ////bld->gather_flags.bits.pick_trees = 1;
+                ////bld->gather_flags.bits.pick_shrubs = 1;
+                ////bld->gather_flags.bits.gather_fallen = 1;
             }
 
             ground.clear();

@@ -102,7 +102,7 @@ protected:
             return false;
         }
 
-        if (!focus.empty() && Gui::getFocusString(screen) != focus)
+        /*if (!focus.empty() && Gui::getFocusString(screen) != focus)
         {
             return false;
         }
@@ -110,7 +110,7 @@ protected:
         if (!parentFocus.empty() && Gui::getFocusString(screen->parent) != parentFocus)
         {
             return false;
-        }
+        }*/
 
         ExpectScreen<T>(focus, parentFocus, filename, lineno);
 

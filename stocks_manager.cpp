@@ -12,10 +12,10 @@
 #include "df/manager_order.h"
 #include "df/manager_order_template.h"
 #include "df/tool_uses.h"
-#include "df/viewscreen_createquotast.h"
+// #include "df/viewscreen_createquotast.h"
 #include "df/viewscreen_dwarfmodest.h"
-#include "df/viewscreen_joblistst.h"
-#include "df/viewscreen_jobmanagementst.h"
+// #include "df/viewscreen_joblistst.h"
+//#include "df/viewscreen_jobmanagementst.h"
 #include "df/world.h"
 
 REQUIRE_GLOBAL(world);
@@ -126,104 +126,104 @@ void ManagerOrderExclusive::Run(color_ostream & out)
 {
     ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
     Key(interface_key::D_JOBLIST);
-    ExpectScreen<df::viewscreen_joblistst>("joblist");
-    Key(interface_key::UNITJOB_MANAGER);
+    //ExpectScreen<df::viewscreen_joblistst>("joblist");
+    //Key(interface_key::UNITJOB_MANAGER);
 
-    {
-        ExpectScreen<df::viewscreen_jobmanagementst>("jobmanagement/Main");
-        ExpectedScreen<df::viewscreen_jobmanagementst> view(this);
+    //{
+    //    ExpectScreen<df::viewscreen_jobmanagementst>("jobmanagement/Main");
+    //    ExpectedScreen<df::viewscreen_jobmanagementst> view(this);
 
-        bool first = true;
-        bool multiple = false;
-        int32_t old_order = -1;
-        for (auto it = world->manager_orders.begin(); it != world->manager_orders.end(); it++)
-        {
-            if (template_equals(*it, &tmpl))
-            {
-                if (first)
-                {
-                    first = false;
-                }
-                else if ((*it)->amount_left == (*it)->amount_total)
-                {
-                    old_order = int32_t(it - world->manager_orders.begin());
-                    amount += (*it)->amount_left;
-                    multiple = true;
-                    break;
-                }
-            }
-        }
+    //    bool first = true;
+    //    bool multiple = false;
+    //    int32_t old_order = -1;
+    //    for (auto it = world->manager_orders.begin(); it != world->manager_orders.end(); it++)
+    //    {
+    //        if (template_equals(*it, &tmpl))
+    //        {
+    //            if (first)
+    //            {
+    //                first = false;
+    //            }
+    //            else if ((*it)->amount_left == (*it)->amount_total)
+    //            {
+    //                old_order = int32_t(it - world->manager_orders.begin());
+    //                amount += (*it)->amount_left;
+    //                multiple = true;
+    //                break;
+    //            }
+    //        }
+    //    }
 
-        if (multiple)
-        {
-            MoveToItem(&view->sel_idx, old_order);
+    //    if (multiple)
+    //    {
+    //        MoveToItem(&view->sel_idx, old_order);
 
-            Key(interface_key::MANAGER_REMOVE);
-        }
-    }
+    //        Key(interface_key::MANAGER_REMOVE);
+    //    }
+    //}
 
     auto quantity = stl_sprintf("%d", std::min(amount, 9999));
 
-    Key(interface_key::MANAGER_NEW_ORDER);
+    //Key(interface_key::MANAGER_NEW_ORDER);
 
-    {
-        ExpectScreen<df::viewscreen_createquotast>("createquota");
-        ExpectedScreen<df::viewscreen_createquotast> view(this);
+    //{
+    //    ExpectScreen<df::viewscreen_createquotast>("createquota");
+    //    ExpectedScreen<df::viewscreen_createquotast> view(this);
 
-        int32_t idx = -1;
-        df::manager_order_template *target = nullptr;
-        auto find_target = [&]() -> bool
-        {
-            for (auto it = view->orders.begin(); it != view->orders.end(); it++)
-            {
-                if (template_equals<df::manager_order_template>(*it, &tmpl))
-                {
-                    idx = it - view->orders.begin();
-                    target = *it;
-                    return true;
-                }
-            }
-            return false;
-        };
+    //    int32_t idx = -1;
+    //    df::manager_order_template *target = nullptr;
+    //    auto find_target = [&]() -> bool
+    //    {
+    //        for (auto it = view->orders.begin(); it != view->orders.end(); it++)
+    //        {
+    //            if (template_equals<df::manager_order_template>(*it, &tmpl))
+    //            {
+    //                idx = it - view->orders.begin();
+    //                target = *it;
+    //                return true;
+    //            }
+    //        }
+    //        return false;
+    //    };
 
-        if (!find_target())
-        {
-            target = df::allocate<df::manager_order_template>();
-            *target = tmpl;
-            idx = int32_t(view->orders.size());
-            view->orders.push_back(target);
-            view->all_orders.push_back(target);
-        }
+    //    if (!find_target())
+    //    {
+    //        target = df::allocate<df::manager_order_template>();
+    //        *target = tmpl;
+    //        idx = int32_t(view->orders.size());
+    //        view->orders.push_back(target);
+    //        view->all_orders.push_back(target);
+    //    }
 
-        EnterString(&view->str_filter, search_word);
+    //    EnterString(&view->str_filter, search_word);
 
-        while (!find_target() && view->str_filter[0])
-        {
-            Key(interface_key::STRING_A000);
-        }
+    //    while (!find_target() && view->str_filter[0])
+    //    {
+    //        Key(interface_key::STRING_A000);
+    //    }
 
-        if (!find_target())
-        {
-            ai.debug(out, "[CHEAT] Failed to get a manager order for " + AI::describe_job(&tmpl) + "; forcing it.");
-            *view->orders.at(0) = tmpl;
-        }
-        else
-        {
-            MoveToItem(&view->sel_idx, idx, interface_key::STANDARDSCROLL_PAGEDOWN, interface_key::STANDARDSCROLL_UP);
-        }
+    //    if (!find_target())
+    //    {
+    //        ai.debug(out, "[CHEAT] Failed to get a manager order for " + AI::describe_job(&tmpl) + "; forcing it.");
+    //        *view->orders.at(0) = tmpl;
+    //    }
+    //    else
+    //    {
+    //        MoveToItem(&view->sel_idx, idx, interface_key::STANDARDSCROLL_PAGEDOWN, interface_key::STANDARDSCROLL_UP);
+    //    }
 
-        Key(interface_key::SELECT);
+    //    Key(interface_key::SELECT);
 
-        EnterString(&view->str_quantity, quantity);
-    }
+    //    EnterString(&view->str_quantity, quantity);
+    //}
 
     Key(interface_key::SELECT);
 
     ai.debug(out, "add_manager_order(" + quantity + ") " + AI::describe_job(&tmpl));
 
-    ExpectScreen<df::viewscreen_jobmanagementst>("jobmanagement/Main");
+    //ExpectScreen<df::viewscreen_jobmanagementst>("jobmanagement/Main");
     Key(interface_key::LEAVESCREEN);
-    ExpectScreen<df::viewscreen_joblistst>("joblist");
+    //ExpectScreen<df::viewscreen_joblistst>("joblist");
     Key(interface_key::LEAVESCREEN);
     ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
 }

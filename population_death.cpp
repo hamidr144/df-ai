@@ -8,10 +8,10 @@
 #include "df/building_coffinst.h"
 #include "df/buildings_other_id.h"
 #include "df/history_event_hist_figure_diedst.h"
-#include "df/ui.h"
+//#include "df/plotinfo.h"
 #include "df/world.h"
 
-REQUIRE_GLOBAL(ui);
+REQUIRE_GLOBAL(plotinfo);
 REQUIRE_GLOBAL(world);
 
 void Population::deathwatch(color_ostream & out)
@@ -27,7 +27,7 @@ void Population::deathwatch(color_ostream & out)
     {
         auto d = virtual_cast<df::history_event_hist_figure_diedst>(*it);
 
-        if (!d || d->site != ui->site_id)
+        if (!d || d->site != plotinfo->site_id)
         {
             continue;
         }
@@ -58,16 +58,16 @@ void Population::update_deads(color_ostream & out)
 
     for (auto bld : world->buildings.other[buildings_other_id::COFFIN])
     {
-        if (!bld->owner)
-        {
-            want_coffin--;
+        //if (!bld->owner)
+        //{
+        //    want_coffin--;
 
-            df::building_coffinst *coffin = virtual_cast<df::building_coffinst>(bld);
-            if (!coffin->burial_mode.bits.no_pets)
-            {
-                want_pet_coffin--;
-            }
-        }
+        //    df::building_coffinst *coffin = virtual_cast<df::building_coffinst>(bld);
+        //    if (!coffin->burial_mode.bits.no_pets)
+        //    {
+        //        want_pet_coffin--;
+        //    }
+        //}
     }
 
     if (want_coffin > 0)
@@ -99,13 +99,13 @@ void Population::update_deads(color_ostream & out)
         for (auto bld : world->buildings.other[buildings_other_id::COFFIN])
         {
             df::building_coffinst *coffin = virtual_cast<df::building_coffinst>(bld);
-            if (!coffin->owner && coffin->burial_mode.bits.no_pets)
-            {
-                coffin->burial_mode.bits.no_pets = 0;
+            //if (!coffin->owner && coffin->burial_mode.bits.no_pets)
+            //{
+            //    coffin->burial_mode.bits.no_pets = 0;
 
-                // convert at most one per cycle
-                break;
-            }
+            //    // convert at most one per cycle
+            //    break;
+            //}
         }
     }
 }

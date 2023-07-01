@@ -9,18 +9,18 @@
 #include "df/entity_position_assignment.h"
 #include "df/historical_entity.h"
 #include "df/historical_figure.h"
-#include "df/layer_object_listst.h"
+//#include "df/layer_object_listst.h"
 #include "df/squad.h"
 #include "df/squad_schedule_order.h"
-#include "df/ui.h"
+//#include "df/plotinfo.h"
 #include "df/unit_skill.h"
 #include "df/unit_soul.h"
 #include "df/viewscreen_dwarfmodest.h"
-#include "df/viewscreen_layer_noblelistst.h"
+//#include "df/viewscreen_layer_noblelistst.h"
 #include "df/world.h"
 
 REQUIRE_GLOBAL(cur_year_tick);
-REQUIRE_GLOBAL(ui);
+REQUIRE_GLOBAL(plotinfo);
 REQUIRE_GLOBAL(world);
 
 bool Population::unit_hasmilitaryduty(df::unit *u)
@@ -30,8 +30,10 @@ bool Population::unit_hasmilitaryduty(df::unit *u)
         return false;
     }
     df::squad *squad = df::squad::find(u->military.squad_id);
-    std::vector<df::squad_schedule_order *> & curmonth = squad->schedule[squad->cur_alert_idx][*cur_year_tick / 28 / 1200]->orders;
-    return !curmonth.empty() && (curmonth.size() != 1 || curmonth[0]->min_count != 0);
+    //std::vector<df::squad_schedule_order *> & curmonth = squad->schedule[squad->cur_alert_idx][*cur_year_tick / 28 / 1200]->orders;
+    //return !curmonth.empty() && (curmonth.size() != 1 || curmonth[0]->min_count != 0);
+
+    return false;
 }
 
 int32_t Population::unit_totalxp(const df::unit *u)
@@ -96,7 +98,7 @@ public:
 
         Key(interface_key::D_NOBLES);
 
-        ExpectedScreen<df::viewscreen_layer_noblelistst> view(this);
+        /*ExpectedScreen<df::viewscreen_layer_noblelistst> view(this);
 
         ExpectScreen<df::viewscreen_layer_noblelistst>("layer_noblelist/List");
 
@@ -112,7 +114,7 @@ public:
                 continue;
             }
 
-            auto position = binsearch_in_vector(ui->main.fortress_entity->positions.own, assignment->position_id);
+            auto position = binsearch_in_vector(plotinfo->main.fortress_entity->positions.own, assignment->position_id);
             if (!position || !position->responsibilities[responsibility])
             {
                 Key(interface_key::STANDARDSCROLL_DOWN);
@@ -170,7 +172,7 @@ public:
             Key(interface_key::SELECT);
             ExpectScreen<df::viewscreen_layer_noblelistst>("layer_noblelist/List");
 
-            if (bookkeeper && ui->nobles.bookkeeper_settings != 4)
+            if (bookkeeper && plotinfo->nobles.bookkeeper_settings != 4)
             {
                 Key(interface_key::NOBLELIST_SETTINGS);
                 ExpectScreen<df::viewscreen_layer_noblelistst>("layer_noblelist/Settings");
@@ -204,16 +206,16 @@ public:
             ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
 
             return;
-        }
+        }*/
 
-        if (found)
-        {
-            ai.debug(out, "Found position for " + enum_item_key(responsibility) + ", but it was already occupied.");
-        }
-        else
-        {
-            ai.debug(out, "Could not find position for " + enum_item_key(responsibility));
-        }
+        //if (found)
+        //{
+        //    ai.debug(out, "Found position for " + enum_item_key(responsibility) + ", but it was already occupied.");
+        //}
+        //else
+        //{
+        //    ai.debug(out, "Could not find position for " + enum_item_key(responsibility));
+        //}
 
         Key(interface_key::LEAVESCREEN);
         ExpectScreen<df::viewscreen_dwarfmodest>("dwarfmode/Default");
@@ -229,7 +231,7 @@ void Population::update_nobles(color_ostream & out)
         return;
     }
 
-    for (auto & asn : ui->main.fortress_entity->assignments_by_type[entity_position_responsibility::HEALTH_MANAGEMENT])
+    for (auto & asn : plotinfo->main.fortress_entity->assignments_by_type[entity_position_responsibility::HEALTH_MANAGEMENT])
     {
         auto hf = df::historical_figure::find(asn->histfig);
         auto doctor = df::unit::find(hf->unit_id);
@@ -243,7 +245,7 @@ void Population::update_nobles(color_ostream & out)
     }
 
 #define WANT_POS(pos) \
-    if (ui->main.fortress_entity->assignments_by_type[entity_position_responsibility::pos].empty()) \
+    if (plotinfo->main.fortress_entity->assignments_by_type[entity_position_responsibility::pos].empty()) \
     { \
         events.queue_exclusive(std::make_unique<AssignNoblesExclusive>(ai, entity_position_responsibility::pos)); \
     }
@@ -266,9 +268,9 @@ void Population::check_noble_apartments(color_ostream & out)
 {
     std::set<int32_t> noble_ids;
 
-    for (auto asn : ui->main.fortress_entity->positions.assignments)
+    for (auto asn : plotinfo->main.fortress_entity->positions.assignments)
     {
-        df::entity_position *pos = binsearch_in_vector(ui->main.fortress_entity->positions.own, asn->position_id);
+        df::entity_position *pos = binsearch_in_vector(plotinfo->main.fortress_entity->positions.own, asn->position_id);
         if (pos->required_office > 0 || pos->required_dining > 0 || pos->required_tomb > 0)
         {
             if (df::historical_figure *hf = df::historical_figure::find(asn->histfig))

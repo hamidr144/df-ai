@@ -11,14 +11,14 @@
 #include "df/item.h"
 #include "df/items_other_id.h"
 #include "df/punishment.h"
-#include "df/ui.h"
-#include "df/viewscreen_justicest.h"
-#include "df/viewscreen_overallstatusst.h"
+////#include "df/plotinfo.h"
+//#include "df/viewscreen_justicest.h"
+//#include "df/viewscreen_overallstatusst.h"
 #include "df/world.h"
 
 REQUIRE_GLOBAL(cur_year);
 REQUIRE_GLOBAL(cur_year_tick);
-REQUIRE_GLOBAL(ui);
+REQUIRE_GLOBAL(plotinfo);
 REQUIRE_GLOBAL(world);
 
 void Population::update_caged(color_ostream & out)
@@ -139,7 +139,7 @@ void Population::update_crimes(color_ostream & out)
 
     for (auto crime : world->crimes.all)
     {
-        if (!crime->flags.bits.discovered || crime->site != ui->site_id)
+        if (!crime->flags.bits.discovered || crime->site != plotinfo->site_id)
         {
             continue;
         }
@@ -229,68 +229,68 @@ void Population::update_crimes(color_ostream & out)
         {
             // FIXME: this should be an ExclusiveCallback
             ai.debug(out, "[Crime] Convicting " + AI::describe_unit(criminal) + " of " + accusation + with_victim + ".");
-            Gui::getCurViewscreen(true)->feed_key(interface_key::D_STATUS);
-            if (auto screen = virtual_cast<df::viewscreen_overallstatusst>(Gui::getCurViewscreen(true)))
-            {
-                auto page = std::find(screen->visible_pages.begin(), screen->visible_pages.end(), df::viewscreen_overallstatusst::Justice);
-                if (page == screen->visible_pages.end())
-                {
-                    ai.debug(out, "[Crime] [ERROR] Could not find justice tab on status screen.");
-                }
-                else
-                {
-                    while (screen->visible_pages.at(screen->page_cursor) != df::viewscreen_overallstatusst::Justice)
-                    {
-                        Gui::getCurViewscreen(true)->feed_key(interface_key::STANDARDSCROLL_RIGHT);
-                    }
-                    Gui::getCurViewscreen(true)->feed_key(interface_key::SELECT);
-                    if (auto justice = virtual_cast<df::viewscreen_justicest>(Gui::getCurViewscreen(true)))
-                    {
-                        auto it = std::find(justice->cases.begin(), justice->cases.end(), crime);
-                        if (it == justice->cases.end())
-                        {
-                            ai.debug(out, "[Crime] Could not find case. Checking " + std::string(justice->cold_cases ? "recent crimes" : "cold cases"));
-                            Gui::getCurViewscreen(true)->feed_key(interface_key::CHANGETAB);
-                            it = std::find(justice->cases.begin(), justice->cases.end(), crime);
-                        }
-                        if (it == justice->cases.end())
-                        {
-                            ai.debug(out, "[Crime] [ERROR] Could not find case.");
-                        }
-                        else
-                        {
-                            while (justice->cases.size() <= size_t(justice->sel_idx_current) || justice->cases.at(size_t(justice->sel_idx_current)) != crime)
-                            {
-                                Gui::getCurViewscreen(true)->feed_key(interface_key::STANDARDSCROLL_DOWN);
-                            }
-                            Gui::getCurViewscreen(true)->feed_key(interface_key::SELECT);
-                            auto convict = std::find(justice->convict_choices.begin(), justice->convict_choices.end(), criminal);
-                            if (convict == justice->convict_choices.end())
-                            {
-                                ai.debug(out, "[Crime] [ERROR] Criminal is not on list of suspects.");
-                                Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
-                            }
-                            else
-                            {
-                                while (justice->convict_choices.at(justice->cursor_right) != criminal)
-                                {
-                                    Gui::getCurViewscreen(true)->feed_key(interface_key::STANDARDSCROLL_DOWN);
-                                }
-                                Gui::getCurViewscreen(true)->feed_key(interface_key::SELECT);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ai.debug(out, "[Crime] [ERROR] Could not open justice tab on status screen.");
-                    }
-                    Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
-                }
-            }
-            else
-            {
-                ai.debug(out, "[Crime] [ERROR] Could not open status screen.");
-            }
+            //Gui::getCurViewscreen(true)->feed_key(interface_key::D_STATUS);
+            //if (auto screen = virtual_cast<df::viewscreen_overallstatusst>(Gui::getCurViewscreen(true)))
+            //{
+            //    auto page = std::find(screen->visible_pages.begin(), screen->visible_pages.end(), df::viewscreen_overallstatusst::Justice);
+            //    if (page == screen->visible_pages.end())
+            //    {
+            //        ai.debug(out, "[Crime] [ERROR] Could not find justice tab on status screen.");
+            //    }
+            //    else
+            //    {
+            //        while (screen->visible_pages.at(screen->page_cursor) != df::viewscreen_overallstatusst::Justice)
+            //        {
+            //            Gui::getCurViewscreen(true)->feed_key(interface_key::STANDARDSCROLL_RIGHT);
+            //        }
+            //        Gui::getCurViewscreen(true)->feed_key(interface_key::SELECT);
+            //        if (auto justice = virtual_cast<df::viewscreen_justicest>(Gui::getCurViewscreen(true)))
+            //        {
+            //            auto it = std::find(justice->cases.begin(), justice->cases.end(), crime);
+            //            if (it == justice->cases.end())
+            //            {
+            //                ai.debug(out, "[Crime] Could not find case. Checking " + std::string(justice->cold_cases ? "recent crimes" : "cold cases"));
+            //                Gui::getCurViewscreen(true)->feed_key(interface_key::CHANGETAB);
+            //                it = std::find(justice->cases.begin(), justice->cases.end(), crime);
+            //            }
+            //            if (it == justice->cases.end())
+            //            {
+            //                ai.debug(out, "[Crime] [ERROR] Could not find case.");
+            //            }
+            //            else
+            //            {
+            //                while (justice->cases.size() <= size_t(justice->sel_idx_current) || justice->cases.at(size_t(justice->sel_idx_current)) != crime)
+            //                {
+            //                    Gui::getCurViewscreen(true)->feed_key(interface_key::STANDARDSCROLL_DOWN);
+            //                }
+            //                Gui::getCurViewscreen(true)->feed_key(interface_key::SELECT);
+            //                auto convict = std::find(justice->convict_choices.begin(), justice->convict_choices.end(), criminal);
+            //                if (convict == justice->convict_choices.end())
+            //                {
+            //                    ai.debug(out, "[Crime] [ERROR] Criminal is not on list of suspects.");
+            //                    Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
+            //                }
+            //                else
+            //                {
+            //                    while (justice->convict_choices.at(justice->cursor_right) != criminal)
+            //                    {
+            //                        Gui::getCurViewscreen(true)->feed_key(interface_key::STANDARDSCROLL_DOWN);
+            //                    }
+            //                    Gui::getCurViewscreen(true)->feed_key(interface_key::SELECT);
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            ai.debug(out, "[Crime] [ERROR] Could not open justice tab on status screen.");
+            //        }
+            //        Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
+            //    }
+            //}
+            //else
+            //{
+            //    ai.debug(out, "[Crime] [ERROR] Could not open status screen.");
+            //}
             Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
         }
 

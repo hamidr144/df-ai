@@ -15,7 +15,7 @@
 #include "df/init.h"
 #include "df/interfacest.h"
 #include "df/renderer.h"
-#include "df/viewscreen_movieplayerst.h"
+//#include "df/viewscreen_movieplayerst.h"
 
 #include <zlib.h>
 
@@ -30,11 +30,11 @@ REQUIRE_GLOBAL(enabler);
 REQUIRE_GLOBAL(gps);
 REQUIRE_GLOBAL(gview);
 REQUIRE_GLOBAL(init);
-REQUIRE_GLOBAL(ui);
+REQUIRE_GLOBAL(plotinfo);
 
-extern "C" DFHACK_IMPORT uint32_t SDL_GetTicks(void);
-extern "C" DFHACK_IMPORT int SDL_SemTryWait(void *sem);
-extern "C" DFHACK_IMPORT uint32_t SDL_ThreadID(void);
+//extern "C" DFHACK_IMPORT uint32_t SDL_GetTicks(void);
+//extern "C" DFHACK_IMPORT int SDL_SemTryWait(void *sem);
+//extern "C" DFHACK_IMPORT uint32_t SDL_ThreadID(void);
 
 bool lockstep_tick_count_forced = false;
 volatile uint32_t lockstep_tick_count = 0;
@@ -121,10 +121,10 @@ static void lockstep_swap_arrays() {
     auto & r = enabler->renderer;
     swap3(r->screen, r->screen_old, gps->screen);
     swap3(r->screentexpos, r->screentexpos_old, gps->screentexpos);
-    swap3(r->screentexpos_addcolor, r->screentexpos_addcolor_old, gps->screentexpos_addcolor);
-    swap3(r->screentexpos_grayscale, r->screentexpos_grayscale_old, gps->screentexpos_grayscale);
-    swap3(r->screentexpos_cf, r->screentexpos_cf_old, gps->screentexpos_cf);
-    swap3(r->screentexpos_cbr, r->screentexpos_cbr_old, gps->screentexpos_cbr);
+    //swap3(r->screentexpos_addcolor, r->screentexpos_addcolor_old, gps->screentexpos_addcolor);
+    //swap3(r->screentexpos_grayscale, r->screentexpos_grayscale_old, gps->screentexpos_grayscale);
+    //swap3(r->screentexpos_cf, r->screentexpos_cf_old, gps->screentexpos_cf);
+    //swap3(r->screentexpos_cbr, r->screentexpos_cbr_old, gps->screentexpos_cbr);
     gps->screen_limit = gps->screen + gps->dimx * gps->dimy * 4;
 }
 
@@ -198,12 +198,12 @@ static void lockstep_remove_to_first()
     }
 }
 
-static constexpr int32_t MOVIEBUFFSIZE = sizeof(df::interfacest::supermoviebuffer) / sizeof(df::interfacest::supermoviebuffer[0]);
-static constexpr int32_t COMPMOVIEBUFFSIZE = sizeof(df::interfacest::supermoviebuffer_comp) / sizeof(df::interfacest::supermoviebuffer_comp[0]);
+//static constexpr int32_t MOVIEBUFFSIZE = sizeof(df::interfacest::supermoviebuffer) / sizeof(df::interfacest::supermoviebuffer[0]);
+//static constexpr int32_t COMPMOVIEBUFFSIZE = sizeof(df::interfacest::supermoviebuffer_comp) / sizeof(df::interfacest::supermoviebuffer_comp[0]);
 
 static BOOST_NOINLINE bool zlibError(int err, const char* msg)
 {
-    std::cerr << "zlib error (CMV \"" << gview->movie_file << "\" is probably corrupted): " << msg << ": " << zError(err) << std::endl;
+    //std::cerr << "zlib error (CMV \"" << gview->movie_file << "\" is probably corrupted): " << msg << ": " << zError(err) << std::endl;
     return false;
 }
 
@@ -211,120 +211,120 @@ static BOOST_NOINLINE bool zlibError(int err, const char* msg)
 
 static int32_t lockstep_write_movie_chunk()
 {
-    int32_t inputsize = gview->supermovie_pos;
-    if (BOOST_UNLIKELY(inputsize > MOVIEBUFFSIZE))
-    {
-        inputsize = MOVIEBUFFSIZE;
-    }
+    //int32_t inputsize = gview->supermovie_pos;
+    //if (BOOST_UNLIKELY(inputsize > MOVIEBUFFSIZE))
+    //{
+    //    inputsize = MOVIEBUFFSIZE;
+    //}
 
-    //DUMP CURRENT BUFFER INTO A COMPRESSION STREAM
-    z_stream c_stream;
-    int err;
+    ////DUMP CURRENT BUFFER INTO A COMPRESSION STREAM
+    //z_stream c_stream;
+    //int err;
 
-    c_stream.zalloc = (alloc_func)0;
-    c_stream.zfree = (free_func)0;
-    c_stream.opaque = (voidpf)0;
+    //c_stream.zalloc = (alloc_func)0;
+    //c_stream.zfree = (free_func)0;
+    //c_stream.opaque = (voidpf)0;
 
-    err = deflateInit(&c_stream, Z_BEST_COMPRESSION);
-    if (CHECK_ERR(err, "deflateInit"))
-    {
-        return 5000001;
-    }
+    //err = deflateInit(&c_stream, Z_BEST_COMPRESSION);
+    //if (CHECK_ERR(err, "deflateInit"))
+    //{
+    //    return 5000001;
+    //}
 
-    c_stream.next_out = (Bytef*)gview->supermoviebuffer_comp;
-    c_stream.avail_out = COMPMOVIEBUFFSIZE;
+    //c_stream.next_out = (Bytef*)gview->supermoviebuffer_comp;
+    //c_stream.avail_out = COMPMOVIEBUFFSIZE;
 
-    c_stream.next_in = (Bytef*)gview->supermoviebuffer;
-    c_stream.avail_in = inputsize;
+    //c_stream.next_in = (Bytef*)gview->supermoviebuffer;
+    //c_stream.avail_in = inputsize;
 
-    while (int32_t(c_stream.total_in) != inputsize && c_stream.total_out < COMPMOVIEBUFFSIZE)
-    {
-        //c_stream.avail_in = c_stream.avail_out = 1; // force small buffers
-        err = deflate(&c_stream, Z_NO_FLUSH);
-        if (CHECK_ERR(err, "deflate"))
-        {
-            return 5000001;
-        }
-    }
+    //while (int32_t(c_stream.total_in) != inputsize && c_stream.total_out < COMPMOVIEBUFFSIZE)
+    //{
+    //    //c_stream.avail_in = c_stream.avail_out = 1; // force small buffers
+    //    err = deflate(&c_stream, Z_NO_FLUSH);
+    //    if (CHECK_ERR(err, "deflate"))
+    //    {
+    //        return 5000001;
+    //    }
+    //}
 
-    // Finish the stream, still forcing small buffers:
-    for (;;)
-    {
-        err = deflate(&c_stream, Z_FINISH);
-        if (err == Z_STREAM_END)
-        {
-            break;
-        }
-        if (CHECK_ERR(err, "deflate"))
-        {
-            return 5000001;
-        }
-    }
+    //// Finish the stream, still forcing small buffers:
+    //for (;;)
+    //{
+    //    err = deflate(&c_stream, Z_FINISH);
+    //    if (err == Z_STREAM_END)
+    //    {
+    //        break;
+    //    }
+    //    if (CHECK_ERR(err, "deflate"))
+    //    {
+    //        return 5000001;
+    //    }
+    //}
 
-    err = deflateEnd(&c_stream);
-    if (CHECK_ERR(err, "deflateEnd"))
-    {
-        return 5000001;
-    }
+    //err = deflateEnd(&c_stream);
+    //if (CHECK_ERR(err, "deflateEnd"))
+    //{
+    //    return 5000001;
+    //}
 
     int length = 0;
 
-    if (c_stream.total_out > 0)
-    {
-        if (BOOST_UNLIKELY(gview->first_movie_write))
-        {
-            //GET RID OF ANY EXISTING MOVIES IF THIS IS THE FIRST TIME THROUGH
-            unlink(gview->movie_file.c_str());
-        }
+    //if (c_stream.total_out > 0)
+    //{
+    //    if (BOOST_UNLIKELY(gview->first_movie_write))
+    //    {
+    //        //GET RID OF ANY EXISTING MOVIES IF THIS IS THE FIRST TIME THROUGH
+    //        unlink(gview->movie_file.c_str());
+    //    }
 
-        //OPEN UP THE MOVIE FILE AND APPEND
-        std::ofstream f(gview->movie_file, std::ios::out | std::ios::binary | std::ios::app);
+    //    //OPEN UP THE MOVIE FILE AND APPEND
+    //    std::ofstream f(gview->movie_file, std::ios::out | std::ios::binary | std::ios::app);
 
-        if (BOOST_LIKELY(f.is_open()))
-        {
-            //WRITE A HEADER
-            if (BOOST_UNLIKELY(gview->first_movie_write))
-            {
-                const int32_t movie_version = 10000;
-                f.write((const char *)&movie_version, sizeof(int32_t));
+    //    if (BOOST_LIKELY(f.is_open()))
+    //    {
+    //        //WRITE A HEADER
+    //        if (BOOST_UNLIKELY(gview->first_movie_write))
+    //        {
+    //            const int32_t movie_version = 10000;
+    //            f.write((const char *)&movie_version, sizeof(int32_t));
 
-                int32_t header[3];
-                header[0] = init->display.grid_x;
-                header[1] = init->display.grid_y;
-                extern std::unique_ptr<AI> dwarfAI;
-                if (BOOST_LIKELY(dwarfAI->camera.movie_started_in_lockstep))
-                {
-                    header[1] *= 2;
-                }
-                header[2] = gview->supermovie_delayrate;
-                f.write((const char *)&header, sizeof(header));
-            }
+    //            int32_t header[3];
+    //            header[0] = init->display.grid_x;
+    //            header[1] = init->display.grid_y;
+    //            extern std::unique_ptr<AI> dwarfAI;
+    //            if (BOOST_LIKELY(dwarfAI->camera.movie_started_in_lockstep))
+    //            {
+    //                header[1] *= 2;
+    //            }
+    //            header[2] = gview->supermovie_delayrate;
+    //            f.write((const char *)&header, sizeof(header));
+    //        }
 
-            //WRITE IT
-            uint32_t compsize = c_stream.total_out;
-            f.write((const char *)&compsize, sizeof(uint32_t));
-            f.write((const char *)gview->supermoviebuffer_comp, c_stream.total_out);
+    //        //WRITE IT
+    //        uint32_t compsize = c_stream.total_out;
+    //        f.write((const char *)&compsize, sizeof(uint32_t));
+    //        f.write((const char *)gview->supermoviebuffer_comp, c_stream.total_out);
 
-            f.seekp(0, std::ios::end);
-            length = f.tellp();
-        }
-        else
-        {
-            gview->supermovie_on = 0;
-        }
+    //        f.seekp(0, std::ios::end);
+    //        length = f.tellp();
+    //    }
+    //    else
+    //    {
+    //        gview->supermovie_on = 0;
+    //    }
 
-        gview->first_movie_write = 0;
-    }
+    //    gview->first_movie_write = 0;
+    //}
 
     return length;
 }
 
 static void lockstep_finish_movie()
 {
-    gview->supermovie_on = 0;
-    gview->currentblocksize = 0;
-    gview->nextfilepos = 0;
-    gview->supermovie_pos = 0;
+    //gview->supermovie_on = 0;
+    //gview->currentblocksize = 0;
+    //gview->nextfilepos = 0;
+    //gview->supermovie_pos = 0;
     extern std::unique_ptr<AI> dwarfAI;
     dwarfAI->camera.check_record_status();
 }
@@ -332,90 +332,90 @@ static void lockstep_finish_movie()
 static void lockstep_handlemovie(bool flushall)
 {
     //SAVE A MOVIE FRAME INTO THE CURRENT MOVIE BUFFER
-    if (gview->supermovie_on == 1)
-    {
-        if (BOOST_UNLIKELY(gview->supermovie_delaystep > 0 && !flushall))
-        {
-            gview->supermovie_delaystep--;
-        }
-        else
-        {
-            if (BOOST_LIKELY(!flushall))
-            {
-                gview->supermovie_delaystep = gview->supermovie_delayrate;
-            }
+    //if (gview->supermovie_on == 1)
+    //{
+    //    if (BOOST_UNLIKELY(gview->supermovie_delaystep > 0 && !flushall))
+    //    {
+    //        gview->supermovie_delaystep--;
+    //    }
+    //    else
+    //    {
+    //        if (BOOST_LIKELY(!flushall))
+    //        {
+    //            gview->supermovie_delaystep = gview->supermovie_delayrate;
+    //        }
 
-            if (!flushall || gview->supermovie_delaystep == 0)
-            {
-                extern std::unique_ptr<AI> dwarfAI;
-                //SAVING CHARACTERS, THEN COLORS
-                short x2, y2;
-                for (x2 = 0; x2 < init->display.grid_x; x2++)
-                {
-                    for (y2 = 0; y2 < init->display.grid_y; y2++)
-                    {
-                        gview->supermoviebuffer[gview->supermovie_pos] = gps->screen[x2 * gps->dimy * 4 + y2 * 4 + 0];
+    //        if (!flushall || gview->supermovie_delaystep == 0)
+    //        {
+    //            extern std::unique_ptr<AI> dwarfAI;
+    //            //SAVING CHARACTERS, THEN COLORS
+    //            short x2, y2;
+    //            for (x2 = 0; x2 < init->display.grid_x; x2++)
+    //            {
+    //                for (y2 = 0; y2 < init->display.grid_y; y2++)
+    //                {
+    //                    gview->supermoviebuffer[gview->supermovie_pos] = gps->screen[x2 * gps->dimy * 4 + y2 * 4 + 0];
 
-                        gview->supermovie_pos++;
-                    }
-                    if (BOOST_LIKELY(dwarfAI && dwarfAI->camera.movie_started_in_lockstep))
-                    {
-                        for (y2 = 0; y2 < init->display.grid_y; y2++)
-                        {
-                            gview->supermoviebuffer[gview->supermovie_pos] = x2 < 80 && y2 < 25 ? dwarfAI->lockstep_log_buffer[y2][x2] : ' ';
+    //                    gview->supermovie_pos++;
+    //                }
+    //                if (BOOST_LIKELY(dwarfAI && dwarfAI->camera.movie_started_in_lockstep))
+    //                {
+    //                    for (y2 = 0; y2 < init->display.grid_y; y2++)
+    //                    {
+    //                        gview->supermoviebuffer[gview->supermovie_pos] = x2 < 80 && y2 < 25 ? dwarfAI->lockstep_log_buffer[y2][x2] : ' ';
 
-                            gview->supermovie_pos++;
-                        }
-                    }
-                }
-                char frame_col;
-                for (x2 = 0; x2 < init->display.grid_x; x2++)
-                {
-                    for (y2 = 0; y2 < init->display.grid_y; y2++)
-                    {
-                        frame_col = gps->screen[x2 * gps->dimy * 4 + y2 * 4 + 1];
-                        frame_col |= (gps->screen[x2 * gps->dimy * 4 + y2 * 4 + 2] << 3);
-                        if (gps->screen[x2 * gps->dimy * 4 + y2 * 4 + 3])
-                        {
-                            frame_col |= 64;
-                        }
-                        gview->supermoviebuffer[gview->supermovie_pos] = frame_col;
+    //                        gview->supermovie_pos++;
+    //                    }
+    //                }
+    //            }
+    //            char frame_col;
+    //            for (x2 = 0; x2 < init->display.grid_x; x2++)
+    //            {
+    //                for (y2 = 0; y2 < init->display.grid_y; y2++)
+    //                {
+    //                    frame_col = gps->screen[x2 * gps->dimy * 4 + y2 * 4 + 1];
+    //                    frame_col |= (gps->screen[x2 * gps->dimy * 4 + y2 * 4 + 2] << 3);
+    //                    if (gps->screen[x2 * gps->dimy * 4 + y2 * 4 + 3])
+    //                    {
+    //                        frame_col |= 64;
+    //                    }
+    //                    gview->supermoviebuffer[gview->supermovie_pos] = frame_col;
 
-                        gview->supermovie_pos++;
-                    }
-                    if (BOOST_LIKELY(dwarfAI && dwarfAI->camera.movie_started_in_lockstep))
-                    {
-                        for (y2 = 0; y2 < init->display.grid_y; y2++)
-                        {
-                            gview->supermoviebuffer[gview->supermovie_pos] = y2 < 25 ? dwarfAI->lockstep_log_color[y2] : 7;
+    //                    gview->supermovie_pos++;
+    //                }
+    //                if (BOOST_LIKELY(dwarfAI && dwarfAI->camera.movie_started_in_lockstep))
+    //                {
+    //                    for (y2 = 0; y2 < init->display.grid_y; y2++)
+    //                    {
+    //                        gview->supermoviebuffer[gview->supermovie_pos] = y2 < 25 ? dwarfAI->lockstep_log_color[y2] : 7;
 
-                            gview->supermovie_pos++;
-                        }
-                    }
-                }
-            }
+    //                        gview->supermovie_pos++;
+    //                    }
+    //                }
+    //            }
+    //        }
 
-            int frame_size = init->display.grid_x * init->display.grid_y * 2;
-            extern std::unique_ptr<AI> dwarfAI;
-            if (BOOST_LIKELY(dwarfAI->camera.movie_started_in_lockstep))
-            {
-                frame_size *= 2;
-            }
-            if (BOOST_UNLIKELY(gview->supermovie_pos + frame_size >= MOVIEBUFFSIZE || flushall || !dwarfAI || !dwarfAI->camera.movie_started_in_lockstep))
-            {
-                int length = lockstep_write_movie_chunk();
+    //        int frame_size = init->display.grid_x * init->display.grid_y * 2;
+    //        extern std::unique_ptr<AI> dwarfAI;
+    //        if (BOOST_LIKELY(dwarfAI->camera.movie_started_in_lockstep))
+    //        {
+    //            frame_size *= 2;
+    //        }
+    //        if (BOOST_UNLIKELY(gview->supermovie_pos + frame_size >= MOVIEBUFFSIZE || flushall || !dwarfAI || !dwarfAI->camera.movie_started_in_lockstep))
+    //        {
+    //            int length = lockstep_write_movie_chunk();
 
-                if (length > 5000000 || dwarfAI == nullptr || !dwarfAI->camera.movie_started_in_lockstep)
-                {
-                    lockstep_finish_movie();
-                }
-                else
-                {
-                    gview->supermovie_pos = 0;
-                }
-            }
-        }
-    }
+    //            if (length > 5000000 || dwarfAI == nullptr || !dwarfAI->camera.movie_started_in_lockstep)
+    //            {
+    //                lockstep_finish_movie();
+    //            }
+    //            else
+    //            {
+    //                gview->supermovie_pos = 0;
+    //            }
+    //        }
+    //    }
+    //}
 }
 
 static bool lockstep_mainloop()
@@ -434,11 +434,11 @@ static bool lockstep_mainloop()
     {
         currentscreen->logic();
 
-        if (currentscreen->movies_okay())
-        {
-            //HANDLE MOVIES
-            lockstep_handlemovie(false);
-        }
+        //if (currentscreen->movies_okay())
+        //{
+        //    //HANDLE MOVIES
+        //    lockstep_handlemovie(false);
+        //}
 
         // df-ai: don't process input
         break;
@@ -450,11 +450,11 @@ static bool lockstep_mainloop()
     }
     case interface_breakdown_types::STOPSCREEN:
     {
-        if (currentscreen->movies_okay())
-        {
-            //HANDLE MOVIES
-            lockstep_handlemovie(false);
-        }
+        //if (currentscreen->movies_okay())
+        //{
+        //    //HANDLE MOVIES
+        //    lockstep_handlemovie(false);
+        //}
 
         lockstep_removescreen(currentscreen);
 
@@ -462,11 +462,11 @@ static bool lockstep_mainloop()
     }
     case interface_breakdown_types::TOFIRST:
     {
-        if (currentscreen->movies_okay())
-        {
-            //HANDLE MOVIES
-            lockstep_handlemovie(false);
-        }
+        //if (currentscreen->movies_okay())
+        //{
+        //    //HANDLE MOVIES
+        //    lockstep_handlemovie(false);
+        //}
 
         lockstep_remove_to_first();
 
@@ -479,32 +479,32 @@ static bool lockstep_mainloop()
 
 static bool lockstep_drain_sdl()
 {
-    SDL::Event event;
+    //SDL::Event event;
 
-    while (SDL_PollEvent(&event))
-    {
-        DFAI_DEBUG(lockstep, 1, "event: " << event.type);
-        // Handle SDL events
-        switch ((SDL::EventType)event.type) {
-        case SDL::ET_KEYDOWN:
-        case SDL::ET_KEYUP:
-            break;
-        case SDL::ET_QUIT:
-            return true;
-        case SDL::ET_MOUSEBUTTONDOWN:
-        case SDL::ET_MOUSEBUTTONUP:
-        case SDL::ET_MOUSEMOTION:
-            break;
-        case SDL::ET_ACTIVEEVENT:
-        case SDL::ET_VIDEOEXPOSE:
-            break;
-        case SDL::ET_VIDEORESIZE:
-            enabler->renderer->resize(event.resize.w, event.resize.h);
-            break;
-        default:
-            break;
-        }
-    }
+    //while (SDL_PollEvent(&event))
+    //{
+    //    DFAI_DEBUG(lockstep, 1, "event: " << event.type);
+    //    // Handle SDL events
+    //    switch ((SDL::EventType)event.type) {
+    //    case SDL::ET_KEYDOWN:
+    //    case SDL::ET_KEYUP:
+    //        break;
+    //    case SDL::ET_QUIT:
+    //        return true;
+    //    case SDL::ET_MOUSEBUTTONDOWN:
+    //    case SDL::ET_MOUSEBUTTONUP:
+    //    case SDL::ET_MOUSEMOTION:
+    //        break;
+    //    case SDL::ET_ACTIVEEVENT:
+    //    case SDL::ET_VIDEOEXPOSE:
+    //        break;
+    //    case SDL::ET_VIDEORESIZE:
+    //        enabler->renderer->resize(event.resize.w, event.resize.h);
+    //        break;
+    //    default:
+    //        break;
+    //    }
+    //}
 
     return false;
 }
@@ -531,14 +531,14 @@ static void lockstep_loop()
             break;
         }
         DFAI_DEBUG(lockstep, 1, "calling DFHack (A)");
-        SDL_NumJoysticks();
+        //SDL_NumJoysticks();
         if (BOOST_UNLIKELY(Hook_Want_Disable()))
         {
             DFAI_DEBUG(lockstep, 1, "want disable (A)");
             break;
         }
         lockstep_tick_count += 10;
-        if (BOOST_LIKELY(!enabler->flag.bits.maxfps && !ui->main.autosave_request))
+        if (BOOST_LIKELY(!enabler->flag.bits.maxfps && !plotinfo->main.autosave_request))
         {
             DFAI_DEBUG(lockstep, 1, "calling mainloop (B)");
             if (BOOST_UNLIKELY(lockstep_mainloop()))
@@ -548,7 +548,7 @@ static void lockstep_loop()
                 break;
             }
             DFAI_DEBUG(lockstep, 1, "calling DFHack (B)");
-            SDL_NumJoysticks();
+            //SDL_NumJoysticks();
             if (BOOST_UNLIKELY(Hook_Want_Disable()))
             {
                 DFAI_DEBUG(lockstep, 1, "want disable (B)");
@@ -563,11 +563,11 @@ static void lockstep_loop()
         enabler->last_tick = lockstep_tick_count;
         enabler->clock = lockstep_tick_count;
         DFAI_DEBUG(lockstep, 1, "draining events");
-        if (BOOST_UNLIKELY(lockstep_drain_sdl()))
-        {
-            DFAI_DEBUG(lockstep, 1, "user requested quit");
-            break;
-        }
+        //if (BOOST_UNLIKELY(lockstep_drain_sdl()))
+        //{
+        //    DFAI_DEBUG(lockstep, 1, "user requested quit");
+        //    break;
+        //}
         DFAI_DEBUG(lockstep, 1, "swap_arrays");
         lockstep_swap_arrays();
         DFAI_DEBUG(lockstep, 1, "render_things");
@@ -601,18 +601,18 @@ static struct df_ai_renderer : public df::renderer
 
     static void copy_fields(df::renderer *from, df::renderer *to)
     {
-        to->screen = from->screen;
-        to->screentexpos = from->screentexpos;
-        to->screentexpos_addcolor = from->screentexpos_addcolor;
-        to->screentexpos_grayscale = from->screentexpos_grayscale;
-        to->screentexpos_cf = from->screentexpos_cf;
-        to->screentexpos_cbr = from->screentexpos_cbr;
-        to->screen_old = from->screen_old;
-        to->screentexpos_old = from->screentexpos_old;
-        to->screentexpos_addcolor_old = from->screentexpos_addcolor_old;
-        to->screentexpos_grayscale_old = from->screentexpos_grayscale_old;
-        to->screentexpos_cf_old = from->screentexpos_cf_old;
-        to->screentexpos_cbr_old = from->screentexpos_cbr_old;
+        //to->screen = from->screen;
+        //to->screentexpos = from->screentexpos;
+        //to->screentexpos_addcolor = from->screentexpos_addcolor;
+        //to->screentexpos_grayscale = from->screentexpos_grayscale;
+        //to->screentexpos_cf = from->screentexpos_cf;
+        //to->screentexpos_cbr = from->screentexpos_cbr;
+        //to->screen_old = from->screen_old;
+        //to->screentexpos_old = from->screentexpos_old;
+        //to->screentexpos_addcolor_old = from->screentexpos_addcolor_old;
+        //to->screentexpos_grayscale_old = from->screentexpos_grayscale_old;
+        //to->screentexpos_cf_old = from->screentexpos_cf_old;
+        //to->screentexpos_cbr_old = from->screentexpos_cbr_old;
     }
 
     virtual void update_tile(int32_t x, int32_t y)
@@ -666,9 +666,9 @@ static struct df_ai_renderer : public df::renderer
     virtual bool get_mouse_coords(int32_t *x, int32_t *y)
     {
         copy_fields(this, real_renderer);
-        bool res = real_renderer->get_mouse_coords(x, y);
+        //bool res = real_renderer->get_mouse_coords(x, y);
         copy_fields(real_renderer, this);
-        return res;
+        return false /*res*/;
     };
     virtual bool uses_opengl()
     {
@@ -682,10 +682,10 @@ static struct df_ai_renderer : public df::renderer
 
 void Hook_Update()
 {
-    if (BOOST_LIKELY(SDL_ThreadID() == enabler->renderer_threadid))
-    {
-        return;
-    }
+    //if (BOOST_LIKELY(SDL_ThreadID() == enabler->renderer_threadid))
+    //{
+    //    return;
+    //}
 
     if (lockstep_want_shutdown)
     {
@@ -710,11 +710,11 @@ void Hook_Update()
             return;
         }
 
-        if (strict_virtual_cast<df::viewscreen_movieplayerst>(Gui::getCurViewscreen(false)))
-        {
-            DFAI_DEBUG(lockstep, 1, "not hooking while movie player is present");
-            return;
-        }
+        //if (strict_virtual_cast<df::viewscreen_movieplayerst>(Gui::getCurViewscreen(false)))
+        //{
+        //    DFAI_DEBUG(lockstep, 1, "not hooking while movie player is present");
+        //    return;
+        //}
 
         lockstep_hooked = true;
 
@@ -736,7 +736,7 @@ void Hook_Update()
         Add_Hook((void *)gettimeofday, Real_gettimeofday, (void *)Fake_gettimeofday);
 #endif
         DFAI_DEBUG(lockstep, 1, "hooked time");
-        Add_Hook((void *)SDL_GetTicks, Real_SDL_GetTicks, (void *)Fake_SDL_GetTicks);
+        //Add_Hook((void *)SDL_GetTicks, Real_SDL_GetTicks, (void *)Fake_SDL_GetTicks);
         DFAI_DEBUG(lockstep, 1, "hooked ticks");
         enabler->outstanding_gframes = 0;
         enabler->outstanding_frames = 0;
@@ -746,41 +746,41 @@ void Hook_Update()
 
         CoreSuspendReleaseMain releaser;
 
-        SDL_SemWait(enabler->async_zoom.sem);
-        enabler->async_zoom.queue.push_back(zoom_commands::zoom_reset);
-        SDL_SemPost(enabler->async_zoom.sem);
-        SDL_SemPost(enabler->async_zoom.sem_fill);
+        //SDL_SemWait(enabler->async_zoom.sem);
+        //enabler->async_zoom.queue.push_back(zoom_commands::zoom_reset);
+        //SDL_SemPost(enabler->async_zoom.sem);
+        //SDL_SemPost(enabler->async_zoom.sem_fill);
 
-        while (lockstep_hooked && !lockstep_want_shutdown)
-        {
-            while (SDL_SemTryWait(enabler->async_tobox.sem_fill) == 0)
-            {
-                SDL_SemWait(enabler->async_tobox.sem);
-                auto msg = enabler->async_tobox.queue.front();
-                enabler->async_tobox.queue.pop_front();
-                switch (msg.cmd)
-                {
-                case df::enabler::T_async_tobox::T_queue::pause:
-                case df::enabler::T_async_tobox::T_queue::render:
-                {
-                    df::enabler::T_async_frombox::T_queue complete;
-                    complete.msg = df::enabler::T_async_frombox::T_queue::complete;
-                    SDL_SemWait(enabler->async_frombox.sem);
-                    enabler->async_frombox.queue.push_back(complete);
-                    SDL_SemPost(enabler->async_frombox.sem);
-                    SDL_SemPost(enabler->async_frombox.sem_fill);
-                    break;
-                }
-                case df::enabler::T_async_tobox::T_queue::start:
-                case df::enabler::T_async_tobox::T_queue::inc:
-                case df::enabler::T_async_tobox::T_queue::set_fps:
-                    break;
-                }
-                SDL_SemPost(enabler->async_tobox.sem);
-            }
+    //    while (lockstep_hooked && !lockstep_want_shutdown)
+    //    {
+    //        while (SDL_SemTryWait(enabler->async_tobox.sem_fill) == 0)
+    //        {
+    //            SDL_SemWait(enabler->async_tobox.sem);
+    //            auto msg = enabler->async_tobox.queue.front();
+    //            enabler->async_tobox.queue.pop_front();
+    //            switch (msg.cmd)
+    //            {
+    //            case df::enabler::T_async_tobox::T_queue::pause:
+    //            case df::enabler::T_async_tobox::T_queue::render:
+    //            {
+    //                df::enabler::T_async_frombox::T_queue complete;
+    //                complete.msg = df::enabler::T_async_frombox::T_queue::complete;
+    //                SDL_SemWait(enabler->async_frombox.sem);
+    //                enabler->async_frombox.queue.push_back(complete);
+    //                SDL_SemPost(enabler->async_frombox.sem);
+    //                SDL_SemPost(enabler->async_frombox.sem_fill);
+    //                break;
+    //            }
+    //            case df::enabler::T_async_tobox::T_queue::start:
+    //            case df::enabler::T_async_tobox::T_queue::inc:
+    //            case df::enabler::T_async_tobox::T_queue::set_fps:
+    //                break;
+    //            }
+    //            SDL_SemPost(enabler->async_tobox.sem);
+    //        }
 
-            tthread::this_thread::sleep_for(tthread::chrono::seconds(1));
-        }
+    //        tthread::this_thread::sleep_for(tthread::chrono::seconds(1));
+    //    }
     }
 }
 
@@ -798,7 +798,7 @@ void Hook_Shutdown()
 #else
     Remove_Hook((void *)gettimeofday, Real_gettimeofday, (void *)Fake_gettimeofday);
 #endif
-    Remove_Hook((void *)SDL_GetTicks, Real_SDL_GetTicks, (void *)Fake_SDL_GetTicks);
+    //Remove_Hook((void *)SDL_GetTicks, Real_SDL_GetTicks, (void *)Fake_SDL_GetTicks);
     DFAI_DEBUG(lockstep, 1, "unhooked ticks");
 
     if (BOOST_LIKELY(lockstep_renderer == enabler->renderer))
@@ -816,7 +816,7 @@ void Hook_Shutdown()
     enabler->frame_timings.clear();
     enabler->gframe_timings.clear();
     enabler->frame_sum = enabler->gframe_sum = 0;
-    enabler->frame_last = enabler->gframe_last = SDL_GetTicks();
+    //enabler->frame_last = enabler->gframe_last = SDL_GetTicks();
 
     lockstep_hooked = false;
 

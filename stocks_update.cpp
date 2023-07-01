@@ -13,14 +13,14 @@
 #include "df/item_slabst.h"
 #include "df/manager_order.h"
 #include "df/tile_occupancy.h"
-#include "df/ui.h"
+//#include "df/plotinfo.h"
 #include "df/unit.h"
-#include "df/viewscreen_overallstatusst.h"
+//#include "df/viewscreen_overallstatusst.h"
 #include "df/world.h"
 
 REQUIRE_GLOBAL(cur_year);
 REQUIRE_GLOBAL(cur_year_tick);
-REQUIRE_GLOBAL(ui);
+REQUIRE_GLOBAL(plotinfo);
 REQUIRE_GLOBAL(world);
 
 void Stocks::update(color_ostream & out)
@@ -102,23 +102,23 @@ void Stocks::update(color_ostream & out)
     if (ai.eventsJson.is_open())
     {
         // update wealth by opening the status screen
-        Gui::getCurViewscreen(true)->feed_key(interface_key::D_STATUS);
-        if (auto view = strict_virtual_cast<df::viewscreen_overallstatusst>(Gui::getCurViewscreen(true)))
-        {
-            // only leave if we're on the status screen
-            view->feed_key(interface_key::LEAVESCREEN);
-        }
+        //Gui::getCurViewscreen(true)->feed_key(interface_key::D_STATUS);
+        //if (auto view = strict_virtual_cast<df::viewscreen_overallstatusst>(Gui::getCurViewscreen(true)))
+        //{
+        //    // only leave if we're on the status screen
+        //    view->feed_key(interface_key::LEAVESCREEN);
+        //}
         Json::Value payload(Json::objectValue);
-        payload["total"] = Json::Int(ui->tasks.wealth.total);
-        payload["weapons"] = Json::Int(ui->tasks.wealth.weapons);
-        payload["armor"] = Json::Int(ui->tasks.wealth.armor);
-        payload["furniture"] = Json::Int(ui->tasks.wealth.furniture);
-        payload["other"] = Json::Int(ui->tasks.wealth.other);
-        payload["architecture"] = Json::Int(ui->tasks.wealth.architecture);
-        payload["displayed"] = Json::Int(ui->tasks.wealth.displayed);
-        payload["held"] = Json::Int(ui->tasks.wealth.held);
-        payload["imported"] = Json::Int(ui->tasks.wealth.imported);
-        payload["exported"] = Json::Int(ui->tasks.wealth.exported);
+        payload["total"] = Json::Int(plotinfo->tasks.wealth.total);
+        payload["weapons"] = Json::Int(plotinfo->tasks.wealth.weapons);
+        payload["armor"] = Json::Int(plotinfo->tasks.wealth.armor);
+        payload["furniture"] = Json::Int(plotinfo->tasks.wealth.furniture);
+        payload["other"] = Json::Int(plotinfo->tasks.wealth.other);
+        payload["architecture"] = Json::Int(plotinfo->tasks.wealth.architecture);
+        payload["displayed"] = Json::Int(plotinfo->tasks.wealth.displayed);
+        payload["held"] = Json::Int(plotinfo->tasks.wealth.held);
+        payload["imported"] = Json::Int(plotinfo->tasks.wealth.imported);
+        payload["exported"] = Json::Int(plotinfo->tasks.wealth.exported);
         ai.event("wealth", payload);
     }
 
@@ -201,12 +201,12 @@ void Stocks::update(color_ostream & out)
                 continue;
             }
 
-            if (job->job_type == job_type::PenLargeAnimal || job->job_type == job_type::BringItemToDepot || job->job_type == job_type::StoreItemInHospital || job->job_type == job_type::DumpItem || job->job_type == job_type::FillPond)
-            {
-                // high priority hauling jobs
-                job->flags.bits.do_now = true;
-                continue;
-            }
+            //if (job->job_type == job_type::PenLargeAnimal || job->job_type == job_type::BringItemToDepot || job->job_type == job_type::StoreItemInHospital || job->job_type == job_type::DumpItem || job->job_type == job_type::FillPond)
+            //{
+            //    // high priority hauling jobs
+            //    job->flags.bits.do_now = true;
+            //    continue;
+            //}
 
             if (job->job_type == job_type::ConstructBuilding)
             {

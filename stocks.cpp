@@ -13,12 +13,12 @@
 #include "df/manager_order.h"
 #include "df/manager_order_template.h"
 #include "df/matter_state.h"
-#include "df/ui.h"
+//#include "df/plotinfo.h"
 #include "df/world.h"
 
 REQUIRE_GLOBAL(cur_year);
 REQUIRE_GLOBAL(cur_year_tick);
-REQUIRE_GLOBAL(ui);
+REQUIRE_GLOBAL(plotinfo);
 REQUIRE_GLOBAL(world);
 
 #define BEGIN_ENUM BEGIN_IMPLEMENT_ENUM
@@ -386,7 +386,7 @@ command_result Stocks::startup(color_ostream & out)
     update_kitchen(out);
     update_plants(out);
     update_simple_metal_ores(out);
-    ui->stockpile.reserved_barrels = 5;
+    plotinfo->stockpile.reserved_barrels = 5;
     return CR_OK;
 }
 

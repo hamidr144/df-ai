@@ -480,24 +480,24 @@ bool PlanSetup::can_add_room(const room_blueprint & rb, df::coord pos)
             if (r->single_biome)
             {
                 df::coord2d base_region(Maps::getTileBiomeRgn(min));
-                df::biome_type base_biome = Maps::GetBiomeType(base_region.x, base_region.y);
+                //df::biome_type base_biome = Maps::GetBiomeType(base_region.x, base_region.y);
 
-                for (df::coord t = min; t.x <= max.x; t.x++)
-                {
-                    for (t.y = min.y; t.y <= max.y; t.y++)
-                    {
-                        for (t.z = min.z; t.z <= max.z; t.z++)
-                        {
-                            df::coord2d region(Maps::getTileBiomeRgn(t));
-                            df::biome_type biome = region == base_region ? base_biome : Maps::GetBiomeType(region.x, region.y);
-                            if (biome != base_biome)
-                            {
-                                DFAI_DEBUG(blueprint, 4, "Error placing " << DBG_ROOM(rb) << " at " << DBG_COORD(pos) << ": area contains multiple biomes (" << enum_item_key_str(base_biome) << " and " << enum_item_key_str(biome) << ")");
-                                return false;
-                            }
-                        }
-                    }
-                }
+                //for (df::coord t = min; t.x <= max.x; t.x++)
+                //{
+                //    for (t.y = min.y; t.y <= max.y; t.y++)
+                //    {
+                //        for (t.z = min.z; t.z <= max.z; t.z++)
+                //        {
+                //            df::coord2d region(Maps::getTileBiomeRgn(t));
+                //            df::biome_type biome = region == base_region ? base_biome : Maps::GetBiomeType(region.x, region.y);
+                //            if (biome != base_biome)
+                //            {
+                //                DFAI_DEBUG(blueprint, 4, "Error placing " << DBG_ROOM(rb) << " at " << DBG_COORD(pos) << ": area contains multiple biomes (" << enum_item_key_str(base_biome) << " and " << enum_item_key_str(biome) << ")");
+                //                return false;
+                //            }
+                //        }
+                //    }
+                //}
             }
         }
         else

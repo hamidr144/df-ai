@@ -8,7 +8,7 @@
 #include "modules/Screen.h"
 #include "df/coord.h"
 #include "df/interface_key.h"
-#include "df/ui.h"
+#include "df/plotinfost.h"
 #include "df/ui_unit_view_mode.h"
 
 #include "keymap.hpp"
@@ -146,7 +146,8 @@ struct UIState
     // TODO: capture designate mine mode? auto-mine mode may be problematic...
     
     // stockpile state
-    df::interface_key m_stockpile_mode = df::interface_key::STOCKPILE_ANIMAL;
+    //df::interface_key m_stockpile_mode = df::interface_key::STOCKPILE_ANIMAL;
+    df::interface_key m_stockpile_mode = df::interface_key::D_STOCKPILES;
     bool m_custom_stockpile_set;
     df::stockpile_settings m_custom_stockpile;
     

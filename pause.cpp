@@ -8,12 +8,12 @@
 
 #include "df/d_init.h"
 #include "df/report.h"
-#include "df/viewscreen_movieplayerst.h"
-#include "df/viewscreen_requestagreementst.h"
-#include "df/viewscreen_textviewerst.h"
-#include "df/viewscreen_topicmeetingst.h"
-#include "df/viewscreen_topicmeeting_fill_land_holder_positionsst.h"
-#include "df/viewscreen_topicmeeting_takerequestsst.h"
+//#include "df/viewscreen_movieplayerst.h"
+//#include "df/viewscreen_requestagreementst.h"
+//#include "df/viewscreen_textviewerst.h"
+//#include "df/viewscreen_topicmeetingst.h"
+//#include "df/viewscreen_topicmeeting_fill_land_holder_positionsst.h"
+//#include "df/viewscreen_topicmeeting_takerequestsst.h"
 #include "df/world.h"
 
 REQUIRE_GLOBAL(cur_year);
@@ -167,143 +167,143 @@ void AI::statechanged(color_ostream & out, state_change_event st)
     else if (st == SC_VIEWSCREEN_CHANGED)
     {
         df::viewscreen *curview = Gui::getCurViewscreen(true);
-        df::viewscreen_textviewerst *view = strict_virtual_cast<df::viewscreen_textviewerst>(curview);
-        if (view)
-        {
-            bool space = false;
-            std::ostringstream text;
-            for (auto span : view->formatted_text)
-            {
-                if (span->text)
-                {
-                    if (!space && !span->flags.bits.no_newline)
-                    {
-                        space = true;
-                        text << ' ';
-                    }
-                    for (char *c = span->text; *c; c++)
-                    {
-                        if (*c == ' ')
-                        {
-                            if (!space)
-                            {
-                                text << ' ';
-                                space = true;
-                            }
-                        }
-                        else
-                        {
-                            text << *c;
-                            space = false;
-                        }
-                    }
-                }
-            }
-            std::string stripped(text.str());
+        //df::viewscreen_textviewerst *view = strict_virtual_cast<df::viewscreen_textviewerst>(curview);
+        //if (view)
+        //{
+        //    bool space = false;
+        //    std::ostringstream text;
+        //    for (auto span : view->formatted_text)
+        //    {
+        //        if (span->text)
+        //        {
+        //            if (!space && !span->flags.bits.no_newline)
+        //            {
+        //                space = true;
+        //                text << ' ';
+        //            }
+        //            for (char *c = span->text; *c; c++)
+        //            {
+        //                if (*c == ' ')
+        //                {
+        //                    if (!space)
+        //                    {
+        //                        text << ' ';
+        //                        space = true;
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    text << *c;
+        //                    space = false;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    std::string stripped(text.str());
 
-            if (stripped.find("I am your liaison from the Mountainhomes. Let's discuss your situation.") != std::string::npos ||
-                stripped.find("I look forward to our meeting next year.") != std::string::npos ||
-                stripped.find("A diplomat has left unhappy.") != std::string::npos ||
-                stripped.find("What a pleasant surprise! Not a single tree here weeps from the abuses meted out with such ease by your people. Joy! The dwarves have turned a page, not that we would make paper. A travesty! Perhaps it is better said that the dwarves have turned over a new leaf, and the springtime for our two races has only just begun.") != std::string::npos ||
-                stripped.find("You have disrespected the trees in this area, but this is what we have come to expect from your stunted kind. Further abuse cannot be tolerated. Let this be a warning to you.") != std::string::npos ||
-                stripped.find("Greetings from the woodlands. We have much to discuss.") != std::string::npos ||
-                stripped.find("Although we do not always see eye to eye (ha!), I bid you farewell. May you someday embrace nature as you embrace the rocks and mud.") != std::string::npos ||
-                stripped.find("Greetings, noble dwarf. There is much to discuss.") != std::string::npos ||
-                (stripped.find("It has been an honor, noble") != std::string::npos && stripped.find(". I bid you farewell.") != std::string::npos) ||
-                (stripped.find("On behalf of the") != std::string::npos && stripped.find("Guild, let me extend greetings to your people. There is much to discuss.") != std::string::npos) ||
-                (stripped.find("Again on behalf of the") != std::string::npos && stripped.find("Guild, let me bid farewell to you and your stout dwarves.") != std::string::npos))
-            {
-                debug(out, "exit diplomat textviewerst:" + stripped);
-                timeout_sameview([](color_ostream &)
-                {
-                    Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
-                });
-            }
-            else if (stripped.find("A vile force of darkness has arrived!") != std::string::npos ||
-                stripped.find("have brought the full forces of their lands against you.") != std::string::npos ||
-                stripped.find("The enemy have come and are laying siege to the fortress.") != std::string::npos ||
-                stripped.find("The dead walk. Hide while you still can!") != std::string::npos)
-            {
-                debug(out, "exit siege textviewerst:" + stripped);
-                timeout_sameview([this](color_ostream &)
-                {
-                    Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
-                    unpause();
-                });
-            }
-            else if (!config.allow_pause) // don't spew a bunch of logs if the player is likely to open things like unit descriptions
-            {
-                debug(out, "[ERROR] paused in unknown textviewerst:" + stripped);
-            }
-        }
-        else if (strict_virtual_cast<df::viewscreen_topicmeetingst>(curview))
-        {
-            debug(out, "exit diplomat topicmeetingst");
-            timeout_sameview([](color_ostream &)
-            {
-                Gui::getCurViewscreen(true)->feed_key(interface_key::OPTION1);
-            });
-        }
-        else if (strict_virtual_cast<df::viewscreen_topicmeeting_takerequestsst>(curview))
-        {
-            debug(out, "exit diplomat topicmeeting_takerequestsst");
-            timeout_sameview([](color_ostream &)
-            {
-                Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
-            });
-        }
-        else if (strict_virtual_cast<df::viewscreen_requestagreementst>(curview))
-        {
-            debug(out, "exit diplomat requestagreementst");
-            timeout_sameview([](color_ostream &)
-            {
-                Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
-            });
-        }
-        else if (strict_virtual_cast<df::viewscreen_topicmeeting_fill_land_holder_positionsst>(curview))
-        {
-            debug(out, "exit diplomat viewscreen_topicmeeting_fill_land_holder_positionsst");
-            timeout_sameview([](color_ostream &)
-            {
-                Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
-            });
-        }
-        else if (auto view = strict_virtual_cast<df::viewscreen_movieplayerst>(curview))
-        {
-            if (!view->is_playing)
-            {
-                Screen::dismiss(curview);
-                camera.check_record_status();
-            }
-        }
-        else if (auto hack = dfhack_viewscreen::try_cast(curview))
-        {
-            std::string focus = hack->getFocusString();
-            if (focus == "lua/status_overlay")
-            {
-                debug(out, "dismissing gui/extended-status overlay");
-                Screen::dismiss(hack);
-            }
-            else if (focus == "lua/warn-starving")
-            {
-                debug(out, "exit warn-starving dialog");
-                timeout_sameview([](color_ostream &)
-                {
-                    Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
-                });
-            }
-            else if (seen_focus.insert(focus).second)
-            {
-                debug(out, "[ERROR] paused in unknown DFHack viewscreen " + focus);
-            }
-        }
-        else if (virtual_identity *ident = virtual_identity::get(curview))
-        {
-            std::string cvname = ident->getName();
-            if (seen_cvname.insert(cvname).second)
-            {
-                debug(out, "[ERROR] paused in unknown viewscreen " + cvname);
-            }
-        }
+        //    if (stripped.find("I am your liaison from the Mountainhomes. Let's discuss your situation.") != std::string::npos ||
+        //        stripped.find("I look forward to our meeting next year.") != std::string::npos ||
+        //        stripped.find("A diplomat has left unhappy.") != std::string::npos ||
+        //        stripped.find("What a pleasant surprise! Not a single tree here weeps from the abuses meted out with such ease by your people. Joy! The dwarves have turned a page, not that we would make paper. A travesty! Perhaps it is better said that the dwarves have turned over a new leaf, and the springtime for our two races has only just begun.") != std::string::npos ||
+        //        stripped.find("You have disrespected the trees in this area, but this is what we have come to expect from your stunted kind. Further abuse cannot be tolerated. Let this be a warning to you.") != std::string::npos ||
+        //        stripped.find("Greetings from the woodlands. We have much to discuss.") != std::string::npos ||
+        //        stripped.find("Although we do not always see eye to eye (ha!), I bid you farewell. May you someday embrace nature as you embrace the rocks and mud.") != std::string::npos ||
+        //        stripped.find("Greetings, noble dwarf. There is much to discuss.") != std::string::npos ||
+        //        (stripped.find("It has been an honor, noble") != std::string::npos && stripped.find(". I bid you farewell.") != std::string::npos) ||
+        //        (stripped.find("On behalf of the") != std::string::npos && stripped.find("Guild, let me extend greetings to your people. There is much to discuss.") != std::string::npos) ||
+        //        (stripped.find("Again on behalf of the") != std::string::npos && stripped.find("Guild, let me bid farewell to you and your stout dwarves.") != std::string::npos))
+        //    {
+        //        debug(out, "exit diplomat textviewerst:" + stripped);
+        //        timeout_sameview([](color_ostream &)
+        //        {
+        //            Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
+        //        });
+        //    }
+        //    else if (stripped.find("A vile force of darkness has arrived!") != std::string::npos ||
+        //        stripped.find("have brought the full forces of their lands against you.") != std::string::npos ||
+        //        stripped.find("The enemy have come and are laying siege to the fortress.") != std::string::npos ||
+        //        stripped.find("The dead walk. Hide while you still can!") != std::string::npos)
+        //    {
+        //        debug(out, "exit siege textviewerst:" + stripped);
+        //        timeout_sameview([this](color_ostream &)
+        //        {
+        //            Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
+        //            unpause();
+        //        });
+        //    }
+        //    else if (!config.allow_pause) // don't spew a bunch of logs if the player is likely to open things like unit descriptions
+        //    {
+        //        debug(out, "[ERROR] paused in unknown textviewerst:" + stripped);
+        //    }
+        //}
+        //else if (strict_virtual_cast<df::viewscreen_topicmeetingst>(curview))
+        //{
+        //    debug(out, "exit diplomat topicmeetingst");
+        //    timeout_sameview([](color_ostream &)
+        //    {
+        //        Gui::getCurViewscreen(true)->feed_key(interface_key::OPTION1);
+        //    });
+        //}
+        //else if (strict_virtual_cast<df::viewscreen_topicmeeting_takerequestsst>(curview))
+        //{
+        //    debug(out, "exit diplomat topicmeeting_takerequestsst");
+        //    timeout_sameview([](color_ostream &)
+        //    {
+        //        Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
+        //    });
+        //}
+        //else if (strict_virtual_cast<df::viewscreen_requestagreementst>(curview))
+        //{
+        //    debug(out, "exit diplomat requestagreementst");
+        //    timeout_sameview([](color_ostream &)
+        //    {
+        //        Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
+        //    });
+        //}
+        //else if (strict_virtual_cast<df::viewscreen_topicmeeting_fill_land_holder_positionsst>(curview))
+        //{
+        //    debug(out, "exit diplomat viewscreen_topicmeeting_fill_land_holder_positionsst");
+        //    timeout_sameview([](color_ostream &)
+        //    {
+        //        Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
+        //    });
+        //}
+        //else if (auto view = strict_virtual_cast<df::viewscreen_movieplayerst>(curview))
+        //{
+        //    if (!view->is_playing)
+        //    {
+        //        Screen::dismiss(curview);
+        //        camera.check_record_status();
+        //    }
+        //}
+        //else if (auto hack = dfhack_viewscreen::try_cast(curview))
+        //{
+        //    std::string focus = hack->getFocusString();
+        //    if (focus == "lua/status_overlay")
+        //    {
+        //        debug(out, "dismissing gui/extended-status overlay");
+        //        Screen::dismiss(hack);
+        //    }
+        //    else if (focus == "lua/warn-starving")
+        //    {
+        //        debug(out, "exit warn-starving dialog");
+        //        timeout_sameview([](color_ostream &)
+        //        {
+        //            Gui::getCurViewscreen(true)->feed_key(interface_key::LEAVESCREEN);
+        //        });
+        //    }
+        //    else if (seen_focus.insert(focus).second)
+        //    {
+        //        debug(out, "[ERROR] paused in unknown DFHack viewscreen " + focus);
+        //    }
+        //}
+        //else if (virtual_identity *ident = virtual_identity::get(curview))
+        //{
+        //    std::string cvname = ident->getName();
+        //    if (seen_cvname.insert(cvname).second)
+        //    {
+        //        debug(out, "[ERROR] paused in unknown viewscreen " + cvname);
+        //    }
+        //}
     }
 }
